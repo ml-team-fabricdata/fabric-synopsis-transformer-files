@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Synopsis Transformer - Fabric AI Services</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -233,7 +234,7 @@
         <!-- Header -->
         <div class="text-center mb-12 space-y-4">
             <div class="flex items-center justify-center gap-3 mb-4">
-                <i class="lucide-brain" style="font-size: 48px; color: #22d3ee;"></i>
+                <i class="lucide-brain" style="color: #22d3ee; font-size: 48px;"></i>
             </div>
             <h1 class="text-5xl font-black gradient-text tracking-tight">
                 Synopsis Transformer
@@ -339,7 +340,10 @@
 
     <script>
         // Initialize Lucide icons
-        lucide.createIcons();
+        window.lucide = window.lucide || {};
+        window.lucide.icons = window.lucide.icons || {};
+        window.lucide.load = window.lucide.load || function() {};
+        window.lucide.load();
 
         const uploadBtn = document.getElementById("uploadBtn");
         const fetchBtn = document.getElementById("fetchBtn");
@@ -358,7 +362,7 @@
             document.body.appendChild(toast);
             setTimeout(() => {
                 toast.classList.add('show');
-                lucide.createIcons();
+                window.lucide.load();
             }, 100);
             setTimeout(() => {
                 toast.classList.remove('show');
@@ -447,7 +451,7 @@
                     <p class="text-lg">Loading results...</p>
                 </div>
             `;
-            lucide.createIcons();
+            window.lucide.load();
 
             try {
                 const resp = await fetch(`${baseEndpoint}/results`, {
@@ -470,7 +474,7 @@
                             <p class="text-lg">No results found</p>
                         </div>
                     `;
-                    lucide.createIcons();
+                    window.lucide.load();
                     return;
                 }
 
@@ -499,7 +503,7 @@
                     html += `</ul></div>`;
                 }
                 resultsDiv.innerHTML = html;
-                lucide.createIcons();
+                window.lucide.load();
                 showToast(`✓ Found ${Object.keys(sessions).length} session(s)`);
             } catch (err) {
                 resultsDiv.innerHTML = `<pre class="text-red-400 text-sm p-4 bg-red-500/10 rounded-lg">${err.message}</pre>`;
