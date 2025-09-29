@@ -3,18 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Synopsis Transformer Results - Fabric AI Services</title>
+  <title>Synopsis Transformer - Fabric AI Services</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
-  <div class="w-full max-w-3xl p-6 bg-gray-800 rounded-lg shadow-lg space-y-6">
-    <h1 class="text-2xl font-bold text-cyan-400">Results Browser</h1>
+  <div class="w-full max-w-4xl p-6 bg-gray-800 rounded-lg shadow-lg space-y-8">
+    <h1 class="text-3xl font-bold text-cyan-400 text-center">Synopsis Transformer</h1>
 
     <!-- API & User Inputs -->
     <div class="space-y-4">
       <div>
-        <label class="block text-sm mb-1">API Endpoint</label>
-        <input id="endpoint" type="text" placeholder="https://your-api-gateway-url/$default/results"
+        <label class="block text-sm mb-1">Upload API Endpoint</label>
+        <input id="uploadEndpoint" type="text" placeholder="https://your-api/upload"
+          class="w-full px-3 py-2 rounded bg-gray-700 border border-gray-600 focus:ring focus:ring-cyan-500"/>
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Results API Endpoint</label>
+        <input id="resultsEndpoint" type="text" placeholder="https://your-api/results"
           class="w-full px-3 py-2 rounded bg-gray-700 border border-gray-600 focus:ring focus:ring-cyan-500"/>
       </div>
       <div>
@@ -22,27 +27,86 @@
         <input id="userId" type="text" placeholder="rafa"
           class="w-full px-3 py-2 rounded bg-gray-700 border border-gray-600 focus:ring focus:ring-cyan-500"/>
       </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="space-y-4">
+      <h2 class="text-xl font-semibold text-purple-400">Upload Files</h2>
+      <input id="fileInput" type="file" accept=".vtt" multiple
+        class="w-full px-3 py-2 rounded bg-gray-700 border border-gray-600"/>
+      <button id="uploadBtn"
+        class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded font-semibold">
+        Upload & Transform
+      </button>
+      <div id="uploadStatus" class="text-sm text-gray-400"></div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="space-y-4">
+      <h2 class="text-xl font-semibold text-green-400">Results</h2>
       <button id="fetchBtn"
         class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded font-semibold">
         Fetch Results
       </button>
-    </div>
-
-    <!-- Results -->
-    <div id="results" class="space-y-4">
-      <p class="text-gray-400">No results yet...</p>
+      <div id="results" class="space-y-4">
+        <p class="text-gray-400">No results yet...</p>
+      </div>
     </div>
   </div>
 
   <script>
+    const uploadBtn = document.getElementById("uploadBtn");
     const fetchBtn = document.getElementById("fetchBtn");
+    const uploadStatus = document.getElementById("uploadStatus");
     const resultsDiv = document.getElementById("results");
 
-    fetchBtn.addEventListener("click", async () => {
-      const endpoint = document.getElementById("endpoint").value.trim();
+    // Handle file upload
+    uploadBtn.addEventListener("click", async () => {
+      const endpoint = document.getElementById("uploadEndpoint").value.trim();
       const userId = document.getElementById("userId").value.trim();
+      const files = document.getElementById("fileInput").files;
+
+      if (!endpoint || !userId || files.length === 0) {
+        alert("Please set endpoint, user ID and choose at least one file");
+        return;
+      }
+
+      uploadStatus.textContent = "Uploading...";
+
+      const fileArray = [];
+      for (const file of files) {
+        const text = await file.text();
+        fileArray.push({
+          file_name: file.name,
+          file_content: text
+        });
+      }
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, files: fileArray })
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          uploadStatus.textContent = "Upload successful! " + JSON.stringify(result);
+        } else {
+          uploadStatus.textContent = "Error: " + JSON.stringify(result);
+        }
+      } catch (err) {
+        uploadStatus.textContent = "Error: " + err.message;
+      }
+    });
+
+    // Handle results fetch
+    fetchBtn.addEventListener("click", async () => {
+      const endpoint = document.getElementById("resultsEndpoint").value.trim();
+      const userId = document.getElementById("userId").value.trim();
+
       if (!endpoint || !userId) {
-        alert("Please enter both endpoint and user ID");
+        alert("Please set endpoint and user ID");
         return;
       }
 
@@ -55,21 +119,12 @@
           body: JSON.stringify({ user_id: userId })
         });
 
-        const text = await response.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch {
-          resultsDiv.innerHTML = `<pre class="text-red-400">Invalid JSON:\n${text}</pre>`;
-          return;
-        }
-
+        const data = await response.json();
         if (!response.ok) {
-          resultsDiv.innerHTML = `<pre class="text-red-400">Error:\n${JSON.stringify(data, null, 2)}</pre>`;
+          resultsDiv.innerHTML = `<pre class="text-red-400">${JSON.stringify(data, null, 2)}</pre>`;
           return;
         }
 
-        // Render sessions
         const sessions = data.sessions || {};
         if (Object.keys(sessions).length === 0) {
           resultsDiv.innerHTML = "<p class='text-gray-400'>No sessions found</p>";
@@ -98,7 +153,6 @@
           });
           html += `</ul></div>`;
         }
-
         resultsDiv.innerHTML = html;
       } catch (err) {
         resultsDiv.innerHTML = `<pre class="text-red-400">Error: ${err.message}</pre>`;
