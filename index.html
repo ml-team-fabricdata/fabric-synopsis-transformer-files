@@ -489,7 +489,7 @@
                             <ul class="space-y-2">
                     `;
                     details.files.forEach(f => {
-                        const s3Url = `https://s3.console.aws.amazon.com/s3/object/synopsis-transformer-files?region=us-east-2&prefix=${f.key}`;
+                        const s3Url = f.url || `https://synopsis-transformer-files.s3.us-east-2.amazonaws.com/${f.key}`;
                         html += `
                             <li class="flex justify-between items-center p-3 bg-black/30 rounded-lg hover:bg-black/50 transition-colors">
                                 <span class="text-gray-300 text-sm font-mono truncate flex-1">${f.key}</span>
