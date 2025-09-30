@@ -786,8 +786,13 @@
         function displayFormattedOutput(data) {
             const formattedDiv = document.getElementById('formattedOutput');
             
-            if (!data || !data.outputs) {
-                formattedDiv.innerHTML = '<div class="text-center py-8 text-gray-400">No output data available</div>';
+            if (!data || !Array.isArray(data.outputs)) {
+                // Mostrar JSON crudo si no tiene estructura esperada
+                formattedDiv.innerHTML = `
+                    <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+                        <pre class="text-xs text-green-400 font-mono overflow-auto whitespace-pre-wrap">${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
                 return;
             }
 
