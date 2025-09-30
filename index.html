@@ -705,7 +705,7 @@
                                 </div>
                                 <div class="flex items-center gap-2 ml-4">
                                     <button 
-                                        onclick="viewJson('${s3Url}', '${fileName}')"
+                                        onclick="viewJson('${f.key}', '${fileName}')"
                                         class="px-3 py-1.5 bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg hover:bg-cyan-500/30 transition-all text-xs font-semibold flex items-center gap-1"
                                     >
                                         <i data-lucide="eye" class="w-3 h-3"></i>
@@ -745,7 +745,7 @@
         });
 
         // JSON Viewer functions
-        async function viewJson(url, fileName) {
+        async function viewJson(fileKey, fileName) {
             try {
                 modalTitle.textContent = fileName;
                 document.getElementById('formattedOutput').innerHTML = '<div class="text-center py-8 text-gray-400">Loading...</div>';
@@ -753,7 +753,13 @@
                 jsonModal.classList.add('show');
                 lucide.createIcons();
 
-                const response = await fetch(url);
+                const baseEndpoint = document.getElementById("baseEndpoint").value.trim();
+                const userId = document.getElementById("userId").value.trim();
+                const response = await fetch(`${baseEndpoint}/results`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: userId, action: "view", file_key: fileKey })
+                });
                 const data = await response.json();
                 
                 currentJsonData = data;
