@@ -5,219 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synopsis Transformer - Fabric AI Services</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
-        * { 
-            font-family: 'Inter', sans-serif; 
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #22d3ee, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(to right, #0891b2, #7c3aed);
+        }
+        
+        .gradient-bg:hover {
+            background: linear-gradient(to right, #0e7490, #6d28d9);
         }
 
-        body {
-            background: #000;
-            color: #fff;
-            overflow-x: hidden;
+        .gradient-bg-green {
+            background: linear-gradient(to right, #059669, #0891b2);
         }
 
-        /* Animated Grid Background */
-        .grid-background {
+        .gradient-bg-green:hover {
+            background: linear-gradient(to right, #047857, #0e7490);
+        }
+        
+        .backdrop-blur {
+            backdrop-filter: blur(8px);
+        }
+        
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #374151;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .file-drop-zone {
+            border: 2px dashed #374151;
+            transition: all 0.3s ease;
+        }
+        
+        .file-drop-zone.dragover {
+            border-color: #22d3ee;
+            background-color: rgba(34, 211, 238, 0.05);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                linear-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(34, 211, 238, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-
-        /* Floating Elements */
-        .floating-element {
-            position: fixed;
-            opacity: 0.15;
-            animation: float 20s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .floating-element:nth-child(1) {
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .floating-element:nth-child(2) {
-            top: 60%;
-            right: 15%;
-            animation-delay: -7s;
-        }
-
-        .floating-element:nth-child(3) {
-            bottom: 15%;
-            left: 20%;
-            animation-delay: -14s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-30px) rotate(5deg); }
-            66% { transform: translateY(15px) rotate(-5deg); }
-        }
-
-        /* Gradient Text */
-        .gradient-text {
-            background: linear-gradient(135deg, #22d3ee 0%, #a855f7 50%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Gradient Buttons */
-        .gradient-btn {
-            background: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .gradient-btn:hover {
-            background: linear-gradient(135deg, #0e7490 0%, #6d28d9 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(34, 211, 238, 0.3);
-        }
-
-        .gradient-btn-green {
-            background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
-        }
-
-        .gradient-btn-green:hover {
-            background: linear-gradient(135deg, #047857 0%, #0e7490 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(17, 24, 39, 0.95);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            border: 1px solid rgba(34, 211, 238, 0.3);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        /* File Drop Zone */
-        .file-drop-zone {
-            border: 2px dashed #374151;
-            transition: all 0.3s ease;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .file-drop-zone.dragover {
-            border-color: #22d3ee;
-            background: rgba(34, 211, 238, 0.05);
-            transform: scale(1.02);
-        }
-
-        /* Card Styling */
-        .glass-card {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(55, 65, 81, 0.5);
-            border-radius: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .glass-card:hover {
-            border-color: rgba(34, 211, 238, 0.3);
-            box-shadow: 0 8px 32px rgba(34, 211, 238, 0.1);
-        }
-
-        /* Input Styling */
-        .glass-input {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #374151;
-            color: white;
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .glass-input:focus {
-            border-color: #22d3ee;
-            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
-        }
-
-        .glass-input::placeholder {
-            color: #6b7280;
-        }
-
-        /* Result Card */
-        .result-card {
-            background: rgba(31, 41, 55, 0.6);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .result-card:hover {
-            border-color: rgba(168, 85, 247, 0.5);
-            transform: translateY(-2px);
-        }
-
-        /* Progress Bar */
-        .progress-bar {
-            background: linear-gradient(90deg, #22d3ee 0%, #a855f7 50%, #ec4899 100%);
-            height: 4px;
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-        /* Modal Styling */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(4px);
             z-index: 2000;
-            display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
 
-        .modal-overlay.show {
+        .modal.show {
             display: flex;
         }
 
@@ -225,977 +127,347 @@
             background: rgba(17, 24, 39, 0.95);
             border: 1px solid rgba(34, 211, 238, 0.3);
             border-radius: 16px;
-            max-width: 800px;
+            max-width: 1200px;
             width: 100%;
             max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-body {
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            padding: 24px;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        /* Result card styling similar to first code */
+        .result-item {
+            border: 1px solid #374151;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            transition: all 0.3s ease;
         }
 
-        ::-webkit-scrollbar-track {
-            background: #111827;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4b5563;
+        .result-item:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+            transform: translateY(-2px);
         }
     </style>
 </head>
-<body class="min-h-screen relative">
-    <!-- Animated Grid Background -->
-    <div class="grid-background"></div>
+<body class="min-h-screen bg-black relative overflow-x-hidden">
+    <!-- Animated Background Grid -->
+    <div class="absolute inset-0 grid-pattern animate-pulse"></div>
 
-    <!-- Floating Decorative Elements -->
-    <div class="floating-element">
-        <i class="lucide-sparkles" style="font-size: 120px; color: #22d3ee;"></i>
-    </div>
-    <div class="floating-element">
-        <i class="lucide-zap" style="font-size: 100px; color: #a855f7;"></i>
-    </div>
-    <div class="floating-element">
-        <i class="lucide-cpu" style="font-size: 110px; color: #ec4899;"></i>
-    </div>
-
-    <!-- Main Content -->
-    <div class="relative z-10 max-w-7xl mx-auto px-6 py-12">
-        <!-- Header -->
-        <div class="text-center mb-12 space-y-4">
-            <div class="flex items-center justify-center gap-3 mb-4">
-                <i class="lucide-brain" style="color: #22d3ee; font-size: 48px;"></i>
+    <!-- Floating Futuristic Elements -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-20 right-20 opacity-20 floating-element">
+            <div class="w-32 h-24 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-lg border border-cyan-500/30 flex items-center justify-center backdrop-blur">
+                <i data-lucide="brain" class="w-16 h-16 text-cyan-400"></i>
             </div>
-            <h1 class="text-5xl font-black gradient-text tracking-tight">
+        </div>
+        <div class="absolute top-1/3 left-10 opacity-20 floating-element" style="animation-delay: -2s;">
+            <div class="w-28 h-20 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg border border-purple-500/30 flex items-center justify-center backdrop-blur">
+                <i data-lucide="cpu" class="w-12 h-12 text-purple-400"></i>
+            </div>
+        </div>
+        <div class="absolute bottom-32 right-1/4 opacity-20 floating-element" style="animation-delay: -4s;">
+            <div class="w-24 h-24 bg-gradient-to-br from-green-500/20 to-cyan-500/20 rounded-lg border border-green-500/30 flex items-center justify-center backdrop-blur">
+                <i data-lucide="network" class="w-10 h-10 text-green-400"></i>
+            </div>
+        </div>
+        <div class="absolute top-1/2 right-10 opacity-20 floating-element" style="animation-delay: -1s;">
+            <div class="w-20 h-20 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30 flex items-center justify-center backdrop-blur">
+                <i data-lucide="code-2" class="w-8 h-8 text-yellow-400"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-6 py-8">
+        <!-- Header with Fabric AI Services Branding -->
+        <div class="text-center space-y-4 mb-8">
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <img
+                    src="https://framerusercontent.com/assets/YhHtO4AfpyCgmWFZ6i3dcmRLcAI.png"
+                    alt="Fabric AI Services"
+                    class="h-10 w-auto"
+                />
+                <div class="h-6 w-px bg-gradient-to-b from-cyan-500 to-purple-500"></div>
+                <span class="text-cyan-400 font-semibold text-base tracking-wide">FABRIC AI SERVICES</span>
+            </div>
+
+            <h1 class="text-4xl font-bold gradient-text">
                 Synopsis Transformer
             </h1>
-            <p class="text-xl text-gray-400 font-medium">
-                Fabric AI Services
+            <p class="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                Advanced AI-powered content transformation engine. Upload VTT files, process them with AI, and browse your transformed results.
             </p>
-            <p class="text-base text-gray-500 max-w-2xl mx-auto">
-                Advanced AI-powered content transformation engine with real-time analytics
-            </p>
-        </div>
 
-        <!-- Mode Selection -->
-        <div class="glass-card p-6 mb-8">
-            <div class="flex items-center gap-2 mb-4">
-                <i class="lucide-layers" style="color: #22d3ee; font-size: 20px;"></i>
-                <h2 class="text-lg font-bold text-cyan-400">Processing Mode</h2>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <button id="singleModeBtn" class="px-6 py-3 text-sm font-semibold bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg hover:bg-cyan-500/30 transition-all">
-                    Single Synopsis
-                </button>
-                <button id="batchModeBtn" class="px-6 py-3 text-sm font-semibold bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all">
-                    Batch Excel Processing
-                </button>
-                <button id="resultsViewBtn" class="px-6 py-3 text-sm font-semibold bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all">
-                    View Stored Results
-                </button>
-            </div>
-        </div>
-
-        <!-- Configuration Section -->
-        <div class="glass-card p-6 mb-8">
-            <div class="flex items-center gap-2 mb-4">
-                <i class="lucide-settings" style="color: #22d3ee; font-size: 20px;"></i>
-                <h2 class="text-lg font-bold text-cyan-400">Configuration</h2>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div>
-                    <label for="endpoint" class="block text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-2">
-                        <i class="lucide-link" style="font-size: 12px;"></i> API Endpoint
-                    </label>
-                    <input 
-                        id="endpoint" 
-                        type="text"
-                        placeholder="https://your-api-gateway-url"
-                        class="glass-input w-full font-mono text-sm"
-                    />
+            <!-- Tech Stats -->
+            <div class="flex items-center justify-center gap-6 pt-2">
+                <div class="flex items-center gap-2 text-cyan-400">
+                    <i data-lucide="zap" class="w-3 h-3"></i>
+                    <span class="text-xs font-mono">NEURAL ENGINE</span>
                 </div>
-
-                <div id="userIdSection">
-                    <label for="userId" class="block text-xs font-semibold text-green-400 uppercase tracking-wider mb-2">
-                        <i class="lucide-user" style="font-size: 12px;"></i> User ID
-                        <span class="text-gray-500 normal-case font-normal text-xs ml-1">(for results view only)</span>
-                    </label>
-                    <input 
-                        id="userId" 
-                        type="text" 
-                        placeholder="rafa"
-                        class="glass-input w-full font-mono text-sm"
-                    />
+                <div class="flex items-center gap-2 text-purple-400">
+                    <i data-lucide="brain" class="w-3 h-3"></i>
+                    <span class="text-xs font-mono">AI POWERED</span>
+                </div>
+                <div class="flex items-center gap-2 text-green-400">
+                    <i data-lucide="network" class="w-3 h-3"></i>
+                    <span class="text-xs font-mono">REAL-TIME</span>
                 </div>
             </div>
         </div>
 
-        <!-- Single Synopsis Section -->
-        <div id="singleSection" class="glass-card p-8 mb-8">
-            <div class="flex items-center gap-3 mb-6">
-                <i class="lucide-file-text" style="color: #a855f7; font-size: 24px;"></i>
-                <h2 class="text-2xl font-bold text-purple-400">Single Synopsis Processing</h2>
-            </div>
-
-            <div class="space-y-4 mb-6">
-                <label for="synopsis" class="text-sm font-semibold text-purple-400 uppercase tracking-wider flex items-center gap-2">
-                    <i class="lucide-code-2" style="font-size: 16px;"></i>
-                    Synopsis Content
-                </label>
-                <textarea
-                    id="synopsis"
-                    rows="6"
-                    class="glass-input w-full resize-none leading-relaxed"
-                    placeholder="Enter the synopsis to transform..."
-                >Forced to balance their roles as heroes with the strength of their family bond, the Fantastic Four must defend Earth from a ravenous space god called Galactus and his enigmatic Herald, Silver Surfer.</textarea>
-            </div>
-
-            <button id="transformBtn" class="gradient-btn text-white font-semibold px-8 py-3 rounded-lg flex items-center gap-2">
-                <i class="lucide-zap" style="font-size: 18px;"></i>
-                <span id="transformBtnText">Transform Content</span>
-            </button>
-
-            <div id="timerBadge" class="hidden items-center gap-2 px-3 py-1.5 border border-cyan-500/50 text-cyan-400 bg-cyan-500/10 rounded-full text-sm font-mono mt-4">
-                <i class="lucide-clock" style="font-size: 14px;"></i>
-                <span id="timerText">00:00.0</span>
-            </div>
-
-            <!-- Results Display -->
-            <div id="resultsContainer" class="mt-8 space-y-4"></div>
-
-            <!-- Diagnostics -->
-            <div id="diagnostics" class="hidden grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gradient-to-r from-gray-900/80 to-gray-800/80 rounded-lg border border-gray-700 backdrop-blur mt-6">
-                <div class="space-y-3">
-                    <p class="text-sm font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
-                        <i class="lucide-brain" style="font-size: 16px;"></i>
-                        Target Lengths
-                    </p>
-                    <p id="targetLengths" class="text-lg font-mono text-white">—</p>
-                </div>
-                <div class="space-y-3">
-                    <p class="text-sm font-semibold text-green-400 uppercase tracking-wider flex items-center gap-2">
-                        <i class="lucide-zap" style="font-size: 16px;"></i>
-                        Success Rate
-                    </p>
-                    <p id="successRate" class="text-lg font-mono text-white">0/0</p>
-                </div>
-            </div>
-
-            <!-- JSON Response -->
-            <div class="mt-6">
-                <details class="group">
-                    <summary class="p-4 cursor-pointer bg-black/30 rounded-lg hover:bg-black/50 transition-colors">
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span class="text-lg font-bold text-white">JSON Response</span>
-                            <span class="text-sm text-gray-400 font-mono">(for debugging)</span>
-                            <i class="lucide-chevron-down" style="font-size: 16px;" class="text-gray-400 ml-auto group-open:rotate-180 transition-transform"></i>
-                        </div>
-                    </summary>
-                    <div class="p-4 mt-2">
-                        <pre id="jsonResponse" class="text-xs font-mono text-green-400 bg-black/50 p-4 rounded border border-gray-700 overflow-auto max-h-80 whitespace-pre-wrap">No response data yet...</pre>
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Upload Panel -->
+            <div class="lg:col-span-2">
+                <div class="border border-gray-800 bg-gray-900/50 backdrop-blur rounded-lg shadow-2xl shadow-cyan-500/10">
+                    <div class="border-b border-gray-800 p-4">
+                        <h2 class="text-xl font-bold text-white flex items-center gap-3">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                            Upload & Transform
+                        </h2>
                     </div>
-                </details>
+                    <div class="p-6 space-y-6">
+                        <!-- Configuration -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label for="baseEndpoint" class="text-sm font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="network" class="w-4 h-4"></i>
+                                    API Endpoint
+                                </label>
+                                <input
+                                    id="baseEndpoint"
+                                    type="text"
+                                    placeholder="https://your-api-gateway-url"
+                                    class="w-full font-mono text-sm bg-black/50 border border-gray-700 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 rounded-md px-3 py-2 outline-none"
+                                />
+                            </div>
+                            <div class="space-y-2">
+                                <label for="userId" class="text-sm font-semibold text-green-400 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="user" class="w-4 h-4"></i>
+                                    User ID
+                                </label>
+                                <input
+                                    id="userId"
+                                    type="text"
+                                    placeholder="rafa"
+                                    class="w-full font-mono text-sm bg-black/50 border border-gray-700 text-white placeholder-gray-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 rounded-md px-3 py-2 outline-none"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- File Drop Zone -->
+                        <div class="space-y-4">
+                            <label class="text-sm font-semibold text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                                VTT File Upload
+                            </label>
+                            <div id="fileDropZone" class="file-drop-zone p-6 rounded-lg text-center cursor-pointer">
+                                <input type="file" id="fileInput" accept=".vtt" multiple class="hidden">
+                                <div class="space-y-3">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto border border-purple-500/30">
+                                        <i data-lucide="upload" class="w-6 h-6 text-purple-400"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-semibold">Drop VTT files here or click to browse</p>
+                                        <p class="text-gray-400 text-sm mt-1">Supports multiple file upload</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="fileInfo" class="hidden p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="file-check" class="w-5 h-5 text-purple-400"></i>
+                                    <div>
+                                        <p id="fileInfoText" class="text-white font-semibold"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Button -->
+                        <div class="flex items-center gap-4 flex-wrap pt-4">
+                            <button
+                                id="uploadBtn"
+                                class="gradient-bg text-white px-6 py-2.5 text-sm font-semibold shadow-lg shadow-cyan-500/25 transition-all duration-300 rounded-md flex items-center gap-2"
+                            >
+                                <i data-lucide="send" class="w-4 h-4 mr-2"></i>
+                                <span>Upload & Transform</span>
+                            </button>
+                            <span id="uploadStatus" class="text-sm text-gray-400 font-mono"></span>
+                        </div>
+
+                        <!-- Important Notice -->
+                        <div class="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5"></i>
+                                <div class="text-sm text-yellow-200">
+                                    <p class="font-semibold mb-1">Important Notice:</p>
+                                    <p>If you see "✗ Upload failed" after clicking Upload & Transform, please wait approximately 30 seconds and then click the "Fetch Results" button. This is a timeout limitation in the test environment, not a processing error. Your files are still being processed successfully.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Info Panel -->
+            <div class="lg:col-span-1">
+                <div class="border border-gray-800 bg-gray-900/50 backdrop-blur rounded-lg shadow-2xl shadow-purple-500/10">
+                    <div class="border-b border-gray-800 p-4">
+                        <h2 class="text-xl font-bold text-white flex items-center gap-3">
+                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                            Quick Guide
+                        </h2>
+                    </div>
+                    <div class="p-6 space-y-4 text-sm text-gray-300">
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 bg-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-cyan-400 font-bold text-xs">1</span>
+                            </div>
+                            <p>Enter your API endpoint and User ID</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-purple-400 font-bold text-xs">2</span>
+                            </div>
+                            <p>Upload one or more VTT files</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-green-400 font-bold text-xs">3</span>
+                            </div>
+                            <p>Click "Upload & Transform" to process</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-yellow-400 font-bold text-xs">4</span>
+                            </div>
+                            <p>Wait ~30 seconds, then click "Fetch Results"</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 bg-pink-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-pink-400 font-bold text-xs">5</span>
+                            </div>
+                            <p>View or download your processed files</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Excel Batch Section -->
-        <div id="excelSection" class="hidden glass-card p-8 mb-8">
-            <div class="flex items-center gap-3 mb-6">
-                <i class="lucide-file-spreadsheet" style="color: #10b981; font-size: 24px;"></i>
-                <h2 class="text-2xl font-bold text-green-400">Batch Excel Processing</h2>
-            </div>
-
-            <div id="fileDropZone" class="file-drop-zone p-12 rounded-xl text-center cursor-pointer mb-6">
-                <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="hidden">
-                <i class="lucide-file-up" style="font-size: 48px; color: #6b7280; margin: 0 auto 16px;"></i>
-                <p class="text-gray-400 text-lg font-medium mb-2">Drop Excel file here or click to browse</p>
-                <p class="text-gray-600 text-sm">Column A should contain "synopsis" header, data from A2 (max 100 rows)</p>
-            </div>
-
-            <div id="fileInfo" class="hidden p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-sm text-green-300 mb-6 flex items-center gap-2">
-                <i class="lucide-check-circle" style="font-size: 16px;"></i>
-                <div>
-                    <p id="fileName" class="font-semibold"></p>
-                    <p id="fileDetails" class="text-xs"></p>
+        <!-- Results Section -->
+        <div class="mt-6">
+            <div class="border border-gray-800 bg-gray-900/50 backdrop-blur rounded-lg shadow-2xl shadow-green-500/10">
+                <div class="border-b border-gray-800 p-4 flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-3">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        Processed Results
+                    </h2>
+                    <button
+                        id="fetchBtn"
+                        class="gradient-bg-green text-white px-4 py-2 text-sm font-semibold shadow-lg shadow-green-500/25 transition-all duration-300 rounded-md flex items-center gap-2"
+                    >
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        Fetch Results
+                    </button>
                 </div>
-            </div>
-
-            <div id="batchProgress" class="hidden space-y-4 p-4 bg-gradient-to-r from-gray-900/80 to-gray-800/80 rounded-lg border border-gray-700 mb-6">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-semibold text-yellow-400 uppercase tracking-wider">Batch Processing</span>
-                    <span id="progressText" class="text-sm font-mono text-white">0/0</span>
-                </div>
-                <div class="w-full bg-gray-700 rounded-full h-2">
-                    <div id="progressBar" class="progress-bar w-0 h-2 rounded-full"></div>
-                </div>
-                <div id="currentProcessing" class="text-xs text-gray-400 font-mono"></div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <button id="processBatchBtn" class="gradient-btn-green text-white font-semibold px-8 py-3 rounded-lg flex items-center gap-2">
-                    <i class="lucide-play" style="font-size: 18px;"></i>
-                    Process Excel File
-                </button>
-                <button id="downloadBtn" class="hidden gradient-btn text-white font-semibold px-8 py-3 rounded-lg flex items-center gap-2">
-                    <i class="lucide-download" style="font-size: 18px;"></i>
-                    Download Results
-                </button>
-            </div>
-        </div>
-
-        <!-- Results View Section -->
-        <div id="resultsViewSection" class="hidden glass-card p-8">
-            <div class="flex items-center gap-3 mb-6">
-                <i class="lucide-database" style="color: #10b981; font-size: 24px;"></i>
-                <h2 class="text-2xl font-bold text-green-400">Stored Results</h2>
-            </div>
-
-            <!-- Important Notice -->
-            <div class="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg mb-6 flex items-start gap-3">
-                <i class="lucide-alert-triangle" style="color: #eab308; font-size: 20px; flex-shrink: 0;"></i>
-                <div class="text-sm text-yellow-300">
-                    <p class="font-semibold mb-1">Important Notice:</p>
-                    <p>If you see "✗ Upload failed" after pressing Upload & Transform, please wait approximately 30 seconds and then click the "Fetch Results" button below. This is a timeout issue in the testing environment, not a processing error. Your files are still being processed successfully.</p>
-                </div>
-            </div>
-
-            <button id="fetchBtn" class="gradient-btn-green text-white font-semibold px-8 py-3 rounded-lg flex items-center gap-2 mb-6">
-                <i class="lucide-refresh-cw" style="font-size: 18px;"></i>
-                Fetch Results
-            </button>
-
-            <div id="results" class="space-y-4">
-                <div class="text-center py-12 text-gray-500">
-                    <i class="lucide-inbox" style="font-size: 48px; margin: 0 auto 16px; opacity: 0.5;"></i>
-                    <p class="text-lg">No results yet. Upload files to get started.</p>
+                <div id="results" class="p-6">
+                    <div class="text-center py-8">
+                        <div class="w-12 h-12 bg-gradient-to-br from-gray-800 to-gray-700 rounded-full flex items-center justify-center mx-auto mb-3 border border-gray-600">
+                            <i data-lucide="inbox" class="w-6 h-6 text-gray-400"></i>
+                        </div>
+                        <p class="text-gray-400 font-mono text-xs">No results yet. Upload files to get started.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Preview Modal -->
-    <div id="previewModal" class="modal-overlay">
+    <!-- JSON Viewer Modal -->
+    <div id="jsonModal" class="modal">
         <div class="modal-content">
-            <div class="p-6 border-b border-gray-700 flex items-center justify-between">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <i class="lucide-eye" style="color: #22d3ee; font-size: 24px;"></i>
-                    File Preview
+            <div class="border-b border-gray-700 p-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                    <i data-lucide="file-json" class="w-5 h-5 text-cyan-400"></i>
+                    <span id="modalTitle">JSON Viewer</span>
                 </h3>
                 <button id="closeModal" class="text-gray-400 hover:text-white transition-colors">
-                    <i class="lucide-x" style="font-size: 24px;"></i>
+                    <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            <div id="previewContent" class="p-6">
-                <div class="text-center py-12 text-gray-400">
-                    <i class="lucide-loader-2 animate-spin" style="font-size: 48px; margin: 0 auto 16px;"></i>
-                    <p>Loading preview...</p>
-                </div>
+            <div class="modal-body">
+                <pre id="jsonContent" class="text-xs font-mono text-green-400 bg-black/50 p-4 rounded border border-gray-700 overflow-auto whitespace-pre-wrap"></pre>
+            </div>
+            <div class="border-t border-gray-700 p-4 flex justify-end gap-3">
+                <button id="copyJsonBtn" class="px-4 py-2 bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg hover:bg-cyan-500/30 transition-all text-sm font-semibold flex items-center gap-2">
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    Copy JSON
+                </button>
+                <button id="downloadJsonBtn" class="px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg hover:bg-green-500/30 transition-all text-sm font-semibold flex items-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    Download
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Toast Container -->
     <div id="toastContainer"></div>
 
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
 
-        // State variables
-        let currentMode = 'single';
-        let isLoading = false;
-        let results = [];
-        let startTime = 0;
-        let timerInterval = null;
-        let excelData = [];
-        let batchResults = [];
-
         // DOM elements
-        const singleModeBtn = document.getElementById('singleModeBtn');
-        const batchModeBtn = document.getElementById('batchModeBtn');
-        const resultsViewBtn = document.getElementById('resultsViewBtn');
-        const singleSection = document.getElementById('singleSection');
-        const excelSection = document.getElementById('excelSection');
-        const resultsViewSection = document.getElementById('resultsViewSection');
-        const endpoint = document.getElementById('endpoint');
-        const userId = document.getElementById('userId');
-        const synopsis = document.getElementById('synopsis');
-        const transformBtn = document.getElementById('transformBtn');
-        const transformBtnText = document.getElementById('transformBtnText');
-        const timerBadge = document.getElementById('timerBadge');
-        const timerText = document.getElementById('timerText');
-        const resultsContainer = document.getElementById('resultsContainer');
-        const diagnostics = document.getElementById('diagnostics');
-        const targetLengths = document.getElementById('targetLengths');
-        const successRate = document.getElementById('successRate');
-        const jsonResponse = document.getElementById('jsonResponse');
-        const fileDropZone = document.getElementById('fileDropZone');
-        const excelFileInput = document.getElementById('excelFileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const fileDetails = document.getElementById('fileDetails');
-        const processBatchBtn = document.getElementById('processBatchBtn');
-        const batchProgress = document.getElementById('batchProgress');
-        const progressText = document.getElementById('progressText');
-        const progressBar = document.getElementById('progressBar');
-        const currentProcessing = document.getElementById('currentProcessing');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const fetchBtn = document.getElementById('fetchBtn');
-        const results_div = document.getElementById('results');
-        const previewModal = document.getElementById('previewModal');
-        const closeModal = document.getElementById('closeModal');
-        const previewContent = document.getElementById('previewContent');
+        const uploadBtn = document.getElementById("uploadBtn");
+        const fetchBtn = document.getElementById("fetchBtn");
+        const uploadStatus = document.getElementById("uploadStatus");
+        const resultsDiv = document.getElementById("results");
+        const fileDropZone = document.getElementById("fileDropZone");
+        const fileInput = document.getElementById("fileInput");
+        const fileInfo = document.getElementById("fileInfo");
+        const fileInfoText = document.getElementById("fileInfoText");
+        const jsonModal = document.getElementById("jsonModal");
+        const closeModal = document.getElementById("closeModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const jsonContent = document.getElementById("jsonContent");
+        const copyJsonBtn = document.getElementById("copyJsonBtn");
+        const downloadJsonBtn = document.getElementById("downloadJsonBtn");
+
+        let selectedFiles = [];
+        let currentJsonData = null;
+        let currentFileName = null;
 
         // Utility functions
-        function showToast(msg) {
+        function showToast(title, description, variant = 'default') {
             const toast = document.createElement('div');
             toast.className = 'toast';
-            toast.innerHTML = `<i class="lucide-bell" style="display: inline; font-size: 16px; margin-right: 8px;"></i>${msg}`;
+            toast.innerHTML = `
+                <div class="font-semibold">${title}</div>
+                <div class="text-sm text-gray-300">${description}</div>
+            `;
+            
+            if (variant === 'destructive') {
+                toast.style.borderColor = '#ef4444';
+                toast.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            }
+            
             document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('show');
-                lucide.createIcons();
-            }, 100);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
             setTimeout(() => {
                 toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 400);
+                setTimeout(() => document.body.removeChild(toast), 300);
             }, 3000);
         }
 
-        function formatDuration(ms) {
-            const seconds = ms / 1000;
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds - minutes * 60;
-            return `${String(minutes).padStart(2, '0')}:${remainingSeconds.toFixed(1).padStart(4, '0')}`;
-        }
-
-        function startTimer() {
-            timerBadge.classList.remove('hidden');
-            timerBadge.classList.add('flex');
-            timerText.textContent = '00:00.0';
-            startTime = performance.now();
-            stopTimer();
-            timerInterval = setInterval(() => {
-                const elapsed = performance.now() - startTime;
-                timerText.textContent = formatDuration(elapsed);
-            }, 100);
-        }
-
-        function stopTimer(finalMs = null) {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-            if (finalMs !== null) {
-                timerText.textContent = formatDuration(finalMs);
-            }
-        }
-
-        function isWithinTarget(actual, target) {
-            return actual <= target && actual >= Math.floor(target * 0.85);
-        }
-
-        function getPercentage(actual, target) {
-            if (!target) return "—";
-            const percentage = (actual * 100) / target;
-            return `${percentage.toFixed(1)}%`;
-        }
-
-        async function copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast('✓ Text copied to clipboard');
-            } catch (error) {
-                showToast('✗ Could not copy text');
-            }
-        }
-
-        // Mode switching
-        function switchToSingleMode() {
-            currentMode = 'single';
-            singleModeBtn.className = 'px-6 py-3 text-sm font-semibold bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg hover:bg-cyan-500/30 transition-all';
-            batchModeBtn.className = 'px-6 py-3 text-sm font-semibold bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all';
-            resultsViewBtn.className = 'px-6 py-3 text-sm font-semibold bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all';
-            singleSection.classList.remove('hidden');
-            excelSection.classList.add('hidden');
-            resultsViewSection.classList.add('hidden');
-        }
-
-        function switchToBatchMode() {
-            currentMode = 'batch';
-            batchModeBtn.className = 'px-6 py-3 text-sm font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/50 rounded-lg hover:bg-purple-500/30 transition-all';
-            singleModeBtn.className = 'px-6 py-3 text-sm font-semibold bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all';
-            resultsViewBtn.className = 'px-6 py-3 text-sm font-semibold bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all';
-            singleSection.classList.add('hidden');
-            excelSection.classList.remove('hidden');
-            resultsViewSection.classList.add('hidden');
-        }
-
-        function switchToResultsView() {
-            currentMode = 'results';
-            resultsViewBtn.className = 'px-6 py-3 text-sm font-semibold bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg hover:bg-green-500/30 transition-all';
-            singleModeBtn.className = 'px-6 py-3 text-sm font-semibold bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all';
-            batchModeBtn.className = 'px-6 py-3 text-sm font-semibold bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all';
-            singleSection.classList.add('hidden');
-            excelSection.classList.add('hidden');
-            resultsViewSection.classList.remove('hidden');
-        }
-
-        // Single synopsis processing
-        function renderResults() {
-            if (results.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div class="text-center py-8">
-                        <div class="w-12 h-12 bg-gradient-to-br from-gray-800 to-gray-700 rounded-full flex items-center justify-center mx-auto mb-3 border border-gray-600">
-                            <i class="lucide-brain" style="font-size: 24px; color: #9ca3af;"></i>
-                        </div>
-                        <p class="text-gray-400 font-mono text-xs">Awaiting neural processing...</p>
-                    </div>
-                `;
-            } else {
-                resultsContainer.innerHTML = results.map(result => {
-                    const withinTarget = isWithinTarget(result.actualLength, result.target);
-                    const badgeClass = withinTarget 
-                        ? 'bg-green-500/20 text-green-400 border-green-500/50' 
-                        : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
-                    
-                    const spanishSection = result.textEs ? `
-                        <div class="mt-4 pt-4 border-t border-gray-700">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-xs font-semibold text-orange-400 uppercase tracking-wider">Spanish Output</span>
-                                <span class="px-2 py-1 rounded-full text-xs font-semibold border bg-orange-500/20 text-orange-400 border-orange-500/50">
-                                    ${result.actualLengthEs} chars · ${getPercentage(result.actualLengthEs, result.target)}
-                                </span>
-                            </div>
-                            <p class="text-xs leading-relaxed mb-2 text-gray-300">${result.textEs}</p>
-                            <button
-                                onclick="copyToClipboard(\`${result.textEs.replace(/`/g, '\\`')}\`)"
-                                class="h-7 px-2 border border-gray-600 text-gray-400 hover:border-orange-500 hover:text-orange-400 hover:bg-orange-500/10 rounded text-xs flex items-center gap-1"
-                            >
-                                <i class="lucide-copy" style="font-size: 12px;"></i>
-                                Copy ES
-                            </button>
-                        </div>
-                    ` : '';
-                    
-                    return `
-                        <div class="result-card">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-bold text-white">Length ${result.target}</h3>
-                                <span class="px-2 py-1 rounded-full text-xs font-semibold border ${badgeClass}">
-                                    ${result.actualLength} chars · ${getPercentage(result.actualLength, result.target)}
-                                </span>
-                            </div>
-                            <div class="mb-2">
-                                <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">English Output</span>
-                            </div>
-                            <p class="text-xs leading-relaxed mb-4 text-gray-300">${result.text}</p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex gap-1">
-                                    <span class="px-2 py-1 text-xs font-mono border border-gray-600 text-gray-400 rounded">
-                                        Target: ${result.target}
-                                    </span>
-                                </div>
-                                <button
-                                    onclick="copyToClipboard(\`${result.text.replace(/`/g, '\\`')}\`)"
-                                    class="h-7 px-2 border border-gray-600 text-gray-400 hover:border-cyan-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded text-xs flex items-center gap-1"
-                                >
-                                    <i class="lucide-copy" style="font-size: 12px;"></i>
-                                    Copy EN
-                                </button>
-                            </div>
-                            ${spanishSection}
-                        </div>
-                    `;
-                }).join('');
-            }
-            lucide.createIcons();
-        }
-
-        async function handleTransform() {
-            const endpointVal = endpoint.value.trim();
-            const synopsisVal = synopsis.value.trim();
-
-            if (!endpointVal) {
-                showToast('⚠️ Please define the API endpoint');
-                return;
-            }
-            if (!synopsisVal) {
-                showToast('⚠️ Please enter a synopsis');
-                return;
-            }
-
-            isLoading = true;
-            results = [];
-            renderResults();
-            diagnostics.classList.add('hidden');
-            jsonResponse.textContent = 'Processing...';
-
-            transformBtn.innerHTML = `
-                <i class="lucide-loader-2 animate-spin" style="font-size: 18px;"></i>
-                Processing...
-            `;
-            transformBtn.disabled = true;
-
-            startTimer();
-
-            let response, endTime;
-            try {
-                response = await fetch(endpointVal, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ synopsis: synopsisVal }),
-                });
-                endTime = performance.now();
-                stopTimer(endTime - startTime);
-            } catch (error) {
-                stopTimer();
-                showToast(`✗ Network error: ${error.message}`);
-                jsonResponse.textContent = `Network error: ${error.message}`;
-                return;
-            } finally {
-                isLoading = false;
-                transformBtn.innerHTML = `
-                    <i class="lucide-zap" style="font-size: 18px;"></i>
-                    Transform Content
-                `;
-                transformBtn.disabled = false;
-                lucide.createIcons();
-            }
-
-            const responseText = await response.text();
-            jsonResponse.textContent = `HTTP ${response.status}\n\n${responseText}`;
-
-            if (!response.ok) {
-                showToast(`✗ HTTP ${response.status} — check CORS/endpoint`);
-                return;
-            }
-
-            let data;
-            try {
-                data = JSON.parse(responseText);
-            } catch {
-                showToast('✗ Could not parse JSON response');
-                return;
-            }
-
-            const outputs = data.outputs || {};
-            const actualLengths = data.lengths_actual || {};
-            const requestedLengths = data.lengths_requested || [];
-            const outputsEs = data.outputs_es || {};
-            const actualLengthsEs = data.lengths_actual_es || {};
-
-            results = Object.keys(outputs)
-                .map(key => {
-                    const target = Number(key.replace('len_', ''));
-                    return {
-                        k: key,
-                        target,
-                        text: outputs[key],
-                        actualLength: actualLengths[key] ?? outputs[key].trim().length,
-                        textEs: outputsEs[key] || null,
-                        actualLengthEs: actualLengthsEs[key] ?? (outputsEs[key] ? outputsEs[key].trim().length : 0),
-                    };
-                })
-                .sort((a, b) => a.target - b.target);
-
-            renderResults();
-
-            const passCount = results.filter(result => isWithinTarget(result.actualLength, result.target)).length;
-            targetLengths.textContent = requestedLengths.join(', ') || '—';
-            successRate.textContent = `${passCount}/${results.length}`;
-            
-            diagnostics.classList.remove('hidden');
-            diagnostics.classList.add('grid');
-
-            showToast(`✓ Completed in ${(endTime - startTime).toFixed(0)} ms`);
-        }
-
-        // Excel batch processing
-        function handleFileSelect(file) {
-            if (!file.name.match(/\.(xlsx|xls)$/)) {
-                showToast('⚠️ Please select an Excel file (.xlsx or .xls)');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[sheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                    if (jsonData.length < 2 || !jsonData[0] || jsonData[0][0]?.toLowerCase() !== 'synopsis') {
-                        showToast('✗ Excel format invalid. Column A1 must contain "synopsis"');
-                        return;
-                    }
-
-                    excelData = [];
-                    for (let i = 1; i < Math.min(jsonData.length, 101); i++) {
-                        if (jsonData[i] && jsonData[i][0] && jsonData[i][0].trim()) {
-                            excelData.push({
-                                row: i + 1,
-                                synopsis: jsonData[i][0].trim()
-                            });
-                        }
-                    }
-
-                    if (excelData.length === 0) {
-                        showToast('✗ No valid synopses found in the Excel file');
-                        return;
-                    }
-
-                    fileName.textContent = file.name;
-                    fileDetails.textContent = `${excelData.length} synopses loaded`;
-                    fileInfo.classList.remove('hidden');
-                    
-                    showToast(`✓ Loaded ${excelData.length} synopses from Excel file`);
-                } catch (error) {
-                    showToast(`✗ Could not read Excel file: ${error.message}`);
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        async function processBatch() {
-            if (excelData.length === 0) {
-                showToast('⚠️ Please upload an Excel file first');
-                return;
-            }
-
-            const endpointVal = endpoint.value.trim();
-            if (!endpointVal) {
-                showToast('⚠️ Please define the API endpoint');
-                return;
-            }
-
-            batchResults = [];
-            batchProgress.classList.remove('hidden');
-            processBatchBtn.disabled = true;
-            processBatchBtn.innerHTML = `
-                <i class="lucide-loader-2 animate-spin" style="font-size: 18px;"></i>
-                Processing Batch...
-            `;
-
-            startTimer();
-
-            for (let i = 0; i < excelData.length; i++) {
-                const item = excelData[i];
-                
-                const progress = ((i + 1) / excelData.length) * 100;
-                progressBar.style.width = `${progress}%`;
-                progressText.textContent = `${i + 1}/${excelData.length}`;
-                currentProcessing.textContent = `Processing row ${item.row}: ${item.synopsis.substring(0, 50)}...`;
-
-                try {
-                    const response = await fetch(endpointVal, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ synopsis: item.synopsis }),
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        batchResults.push({
-                            row: item.row,
-                            originalSynopsis: item.synopsis,
-                            outputs: data.outputs || {},
-                            outputs_es: data.outputs_es || {},
-                            lengths_actual: data.lengths_actual || {},
-                            lengths_actual_es: data.lengths_actual_es || {},
-                            tokens_en: data.tokens_en || {},
-                            tokens_es: data.tokens_es || {},
-                            token_totals_all: data.token_totals_all || {},
-                            success: true
-                        });
-                    } else {
-                        batchResults.push({
-                            row: item.row,
-                            originalSynopsis: item.synopsis,
-                            error: `HTTP ${response.status}`,
-                            success: false
-                        });
-                    }
-                } catch (error) {
-                    batchResults.push({
-                        row: item.row,
-                        originalSynopsis: item.synopsis,
-                        error: error.message,
-                        success: false
-                    });
-                }
-
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-
-            stopTimer();
-            processBatchBtn.disabled = false;
-            processBatchBtn.innerHTML = `
-                <i class="lucide-play" style="font-size: 18px;"></i>
-                Process Excel File
-            `;
-            
-            currentProcessing.textContent = 'Batch processing completed!';
-            downloadBtn.classList.remove('hidden');
-            
-            const successCount = batchResults.filter(r => r.success).length;
-            showToast(`✓ Processed ${batchResults.length} synopses (${successCount} successful)`);
-            
-            lucide.createIcons();
-        }
-
-        function downloadResults() {
-            if (batchResults.length === 0) return;
-
-            const headers = ['Row', 'Original Synopsis'];
-            const lengthTargets = [82, 180, 200, 239, 255];
-            
-            lengthTargets.forEach(target => {
-                headers.push(`English ${target} chars`);
-                headers.push(`English Length ${target}`);
-            });
-            
-            lengthTargets.forEach(target => {
-                headers.push(`Spanish ${target} chars`);
-                headers.push(`Spanish Length ${target}`);
-            });
-            
-            headers.push('English Input Tokens', 'English Output Tokens', 'English Attempts');
-            headers.push('Spanish Input Tokens', 'Spanish Output Tokens', 'Spanish Attempts');
-            headers.push('Total Input Tokens', 'Total Output Tokens', 'Total Attempts');
-            headers.push('cost_usd_claud_haiku_3.5_1M_tokens_entry', 'cost_usd_claud_haiku_3.5_1M_tokens_exit', 'avg_cost_usd_infra_1_synopsis', 'final_cost_usd');
-
-            const rows = [headers];
-
-            batchResults.forEach(result => {
-                const row = [result.row, result.originalSynopsis];
-                
-                if (result.outputs && result.outputs_es) {
-                    lengthTargets.forEach(target => {
-                        const key = `len_${target}`;
-                        const output = result.outputs[key] || '';
-                        const actualLength = result.lengths_actual ? result.lengths_actual[key] : output.length;
-                        row.push(output);
-                        row.push(actualLength);
-                    });
-                    
-                    lengthTargets.forEach(target => {
-                        const key = `len_${target}`;
-                        const output = result.outputs_es[key] || '';
-                        const actualLength = result.lengths_actual_es ? result.lengths_actual_es[key] : output.length;
-                        row.push(output);
-                        row.push(actualLength);
-                    });
-                    
-                    const tokensEn = result.tokens_en || {};
-                    const tokensEs = result.tokens_es || {};
-                    const tokenTotals = result.token_totals_all || {};
-                    
-                    row.push(tokensEn.input_tokens || 0);
-                    row.push(tokensEn.output_tokens || 0);
-                    row.push(tokensEn.attempts || 0);
-                    row.push(tokensEs.input_tokens || 0);
-                    row.push(tokensEs.output_tokens || 0);
-                    row.push(tokensEs.attempts || 0);
-                    row.push(tokenTotals.input_tokens || 0);
-                    row.push(tokenTotals.output_tokens || 0);
-                    row.push(tokenTotals.attempts || 0);
-                    
-                    const inputTokens = tokenTotals.input_tokens || 0;
-                    const outputTokens = tokenTotals.output_tokens || 0;
-                    
-                    const costEntry = 0.8;
-                    const costExit = 4;
-                    const avgCostInfra = 0.00047;
-                    
-                    const finalCost = (inputTokens * (costEntry / 1000000)) + (outputTokens * (costExit / 1000000)) + avgCostInfra;
-                    
-                    row.push(costEntry);
-                    row.push(costExit);
-                    row.push(avgCostInfra);
-                    row.push(finalCost);
-                } else {
-                    lengthTargets.forEach(() => {
-                        row.push(result.error || 'Error');
-                        row.push(0);
-                    });
-                    lengthTargets.forEach(() => {
-                        row.push(result.error || 'Error');
-                        row.push(0);
-                    });
-                    for (let i = 0; i < 9; i++) {
-                        row.push(0);
-                    }
-                    row.push(0.8);
-                    row.push(4);
-                    row.push(0.00047);
-                    row.push(0.00047);
-                }
-                
-                rows.push(row);
-            });
-
-            const worksheet = XLSX.utils.aoa_to_sheet(rows);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Synopsis Results');
-            
-            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-            XLSX.writeFile(workbook, `synopsis-results-${timestamp}.xlsx`);
-            
-            showToast('✓ Results downloaded successfully');
-        }
-
-        // Results view (stored files)
-        async function fetchStoredResults() {
-            const baseEndpoint = endpoint.value.trim();
-            const userIdVal = userId.value.trim();
-            
-            if (!baseEndpoint || !userIdVal) {
-                showToast('⚠️ Missing endpoint or user ID');
-                return;
-            }
-
-            results_div.innerHTML = `
-                <div class="text-center py-12 text-gray-400">
-                    <i class="lucide-loader-2 animate-spin" style="font-size: 48px; margin: 0 auto 16px;"></i>
-                    <p class="text-lg">Loading results...</p>
-                </div>
-            `;
-            lucide.createIcons();
-
-            try {
-                const resp = await fetch(`${baseEndpoint}/results`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: userIdVal })
-                });
-                const data = await resp.json();
-
-                if (!resp.ok) {
-                    results_div.innerHTML = `<pre class="text-red-400 text-sm p-4 bg-red-500/10 rounded-lg overflow-auto">${JSON.stringify(data, null, 2)}</pre>`;
-                    return;
-                }
-
-                const sessions = data.sessions || {};
-                if (Object.keys(sessions).length === 0) {
-                    results_div.innerHTML = `
-                        <div class="text-center py-12 text-gray-500">
-                            <i class="lucide-inbox" style="font-size: 48px; margin: 0 auto 16px; opacity: 0.5;"></i>
-                            <p class="text-lg">No results found</p>
-                        </div>
-                    `;
-                    lucide.createIcons();
-                    return;
-                }
-
-                let html = "";
-                for (const [session, details] of Object.entries(sessions)) {
-                    html += `
-                        <div class="result-card">
-                            <h3 class="text-lg font-bold text-purple-400 mb-4 flex items-center gap-2">
-                                <i class="lucide-folder" style="font-size: 20px;"></i>
-                                Session: ${session}
-                            </h3>
-                            <ul class="space-y-2">
-                    `;
-                    details.files.forEach(f => {
-                        const s3Url = f.url || `https://synopsis-transformer-files.s3.us-east-2.amazonaws.com/${f.key}`;
-                        html += `
-                            <li class="flex justify-between items-center p-3 bg-black/30 rounded-lg hover:bg-black/50 transition-colors">
-                                <span class="text-gray-300 text-sm font-mono truncate flex-1">${f.key}</span>
-                                <div class="flex items-center gap-2 ml-4">
-                                    <button onclick="previewFile('${s3Url}', '${f.key}')" class="text-cyan-400 hover:text-cyan-300 font-semibold text-sm flex items-center gap-1 px-3 py-1 border border-cyan-500/50 rounded hover:bg-cyan-500/10 transition-colors">
-                                        <i class="lucide-eye" style="font-size: 14px;"></i>
-                                        View
-                                    </button>
-                                    <a href="${s3Url}" target="_blank" class="text-green-400 hover:text-green-300 font-semibold text-sm flex items-center gap-1 px-3 py-1 border border-green-500/50 rounded hover:bg-green-500/10 transition-colors">
-                                        <i class="lucide-download" style="font-size: 14px;"></i>
-                                        Download
-                                    </a>
-                                </div>
-                            </li>
-                        `;
-                    });
-                    html += `</ul></div>`;
-                }
-                results_div.innerHTML = html;
-                lucide.createIcons();
-                showToast(`✓ Found ${Object.keys(sessions).length} session(s)`);
-            } catch (err) {
-                results_div.innerHTML = `<pre class="text-red-400 text-sm p-4 bg-red-500/10 rounded-lg">${err.message}</pre>`;
-                showToast(`✗ Error: ${err.message}`);
-            }
-        }
-
-        async function previewFile(url, filename) {
-            previewModal.classList.add('show');
-            previewContent.innerHTML = `
-                <div class="text-center py-12 text-gray-400">
-                    <i class="lucide-loader-2 animate-spin" style="font-size: 48px; margin: 0 auto 16px;"></i>
-                    <p>Loading preview...</p>
-                </div>
-            `;
-            lucide.createIcons();
-
-            try {
-                const response = await fetch(url);
-                const text = await response.text();
-                
-                previewContent.innerHTML = `
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-3 bg-black/30 rounded-lg">
-                            <span class="text-sm font-mono text-gray-400">${filename}</span>
-                            <button onclick="copyToClipboard(\`${text.replace(/`/g, '\\`')}\`)" class="text-cyan-400 hover:text-cyan-300 font-semibold text-sm flex items-center gap-1 px-3 py-1 border border-cyan-500/50 rounded hover:bg-cyan-500/10 transition-colors">
-                                <i class="lucide-copy" style="font-size: 14px;"></i>
-                                Copy Content
-                            </button>
-                        </div>
-                        <div class="p-4 bg-black/50 rounded-lg border border-gray-700 max-h-96 overflow-y-auto">
-                            <pre class="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">${text}</pre>
-                        </div>
-                    </div>
-                `;
-                lucide.createIcons();
-            } catch (error) {
-                previewContent.innerHTML = `
-                    <div class="text-center py-12 text-red-400">
-                        <i class="lucide-alert-circle" style="font-size: 48px; margin: 0 auto 16px;"></i>
-                        <p>Could not load file preview</p>
-                        <p class="text-sm text-gray-400 mt-2">${error.message}</p>
-                    </div>
-                `;
-                lucide.createIcons();
-            }
-        }
-
-        // Event listeners
-        singleModeBtn.addEventListener('click', switchToSingleMode);
-        batchModeBtn.addEventListener('click', switchToBatchMode);
-        resultsViewBtn.addEventListener('click', switchToResultsView);
-        transformBtn.addEventListener('click', handleTransform);
-        processBatchBtn.addEventListener('click', processBatch);
-        downloadBtn.addEventListener('click', downloadResults);
-        fetchBtn.addEventListener('click', fetchStoredResults);
-        closeModal.addEventListener('click', () => previewModal.classList.remove('show'));
-        previewModal.addEventListener('click', (e) => {
-            if (e.target === previewModal) {
-                previewModal.classList.remove('show');
-            }
-        });
-
-        // File drop zone events
-        fileDropZone.addEventListener('click', () => excelFileInput.click());
+        // File handling
+        fileDropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFileSelect(e.target.files));
         fileDropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             fileDropZone.classList.add('dragover');
@@ -1206,29 +478,247 @@
         fileDropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             fileDropZone.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFileSelect(files[0]);
-            }
+            handleFileSelect(e.dataTransfer.files);
         });
-        excelFileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFileSelect(e.target.files[0]);
+
+        function handleFileSelect(files) {
+            selectedFiles = Array.from(files);
+            fileInfoText.textContent = `${selectedFiles.length} file(s) selected: ${selectedFiles.map(f => f.name).join(', ')}`;
+            fileInfo.classList.remove("hidden");
+            showToast('Files Selected', `${selectedFiles.length} file(s) ready for upload`);
+        }
+
+        // Upload handler
+        uploadBtn.addEventListener("click", async () => {
+            const baseEndpoint = document.getElementById("baseEndpoint").value.trim();
+            const userId = document.getElementById("userId").value.trim();
+            
+            if (!baseEndpoint || !userId || selectedFiles.length === 0) {
+                showToast('Error', 'Missing endpoint, user ID, or files', 'destructive');
+                return;
+            }
+
+            uploadStatus.textContent = "Uploading...";
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = `
+                <div class="w-4 h-4 animate-spin mr-2">
+                    <i data-lucide="loader-2" class="w-4 h-4"></i>
+                </div>
+                Processing...
+            `;
+            lucide.createIcons();
+
+            const fileArray = [];
+            for (const f of selectedFiles) {
+                const text = await f.text();
+                fileArray.push({ file_name: f.name, file_content: text });
+            }
+
+            try {
+                const resp = await fetch(`${baseEndpoint}/upload`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: userId, files: fileArray })
+                });
+                const data = await resp.json();
+                
+                if (resp.ok) {
+                    uploadStatus.textContent = "✓ Upload successful";
+                    showToast('Success', 'Files uploaded and processing started');
+                } else {
+                    uploadStatus.textContent = "✗ Upload failed";
+                    showToast('Upload Failed', 'Please wait ~30 seconds and click "Fetch Results"', 'destructive');
+                }
+            } catch (err) {
+                uploadStatus.textContent = "✗ Network error";
+                showToast('Error', `${err.message}`, 'destructive');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = `
+                    <i data-lucide="send" class="w-4 h-4 mr-2"></i>
+                    Upload & Transform
+                `;
+                lucide.createIcons();
             }
         });
 
-        // Keyboard shortcut
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && currentMode === 'single') {
-                handleTransform();
+        // Fetch results handler
+        fetchBtn.addEventListener("click", async () => {
+            const baseEndpoint = document.getElementById("baseEndpoint").value.trim();
+            const userId = document.getElementById("userId").value.trim();
+            
+            if (!baseEndpoint || !userId) {
+                showToast('Error', 'Missing endpoint or user ID', 'destructive');
+                return;
+            }
+
+            resultsDiv.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-12 h-12 bg-gradient-to-br from-gray-800 to-gray-700 rounded-full flex items-center justify-center mx-auto mb-3 border border-gray-600 animate-spin">
+                        <i data-lucide="loader-2" class="w-6 h-6 text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-400 font-mono text-xs">Loading results...</p>
+                </div>
+            `;
+            lucide.createIcons();
+
+            try {
+                const resp = await fetch(`${baseEndpoint}/results`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const data = await resp.json();
+
+                if (!resp.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                            <pre class="text-red-400 text-sm overflow-auto">${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const sessions = data.sessions || {};
+                if (Object.keys(sessions).length === 0) {
+                    resultsDiv.innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="w-12 h-12 bg-gradient-to-br from-gray-800 to-gray-700 rounded-full flex items-center justify-center mx-auto mb-3 border border-gray-600">
+                                <i data-lucide="inbox" class="w-6 h-6 text-gray-400"></i>
+                            </div>
+                            <p class="text-gray-400 font-mono text-xs">No results found</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                    return;
+                }
+
+                let html = '<div class="space-y-6">';
+                for (const [session, details] of Object.entries(sessions)) {
+                    html += `
+                        <div class="result-item p-6">
+                            <div class="flex items-center gap-3 mb-4 pb-4 border-b border-gray-700">
+                                <i data-lucide="folder" class="w-5 h-5 text-purple-400"></i>
+                                <h3 class="text-lg font-bold text-purple-400">Session: ${session}</h3>
+                                <span class="ml-auto px-3 py-1 rounded-full text-xs font-semibold border bg-purple-500/20 text-purple-400 border-purple-500/50">
+                                    ${details.files.length} files
+                                </span>
+                            </div>
+                            <div class="space-y-3">
+                    `;
+                    
+                    details.files.forEach(f => {
+                        const s3Url = f.url || `https://synopsis-transformer-files.s3.us-east-2.amazonaws.com/${f.key}`;
+                        const fileName = f.key.split('/').pop();
+                        html += `
+                            <div class="flex items-center justify-between p-4 bg-black/30 rounded-lg hover:bg-black/50 transition-colors border border-gray-700">
+                                <div class="flex items-center gap-3 flex-1 min-w-0">
+                                    <i data-lucide="file-json" class="w-5 h-5 text-cyan-400 flex-shrink-0"></i>
+                                    <span class="text-gray-300 text-sm font-mono truncate">${fileName}</span>
+                                </div>
+                                <div class="flex items-center gap-2 ml-4">
+                                    <button 
+                                        onclick="viewJson('${s3Url}', '${fileName}')"
+                                        class="px-3 py-1.5 bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg hover:bg-cyan-500/30 transition-all text-xs font-semibold flex items-center gap-1"
+                                    >
+                                        <i data-lucide="eye" class="w-3 h-3"></i>
+                                        View
+                                    </button>
+                                    <a 
+                                        href="${s3Url}" 
+                                        target="_blank"
+                                        class="px-3 py-1.5 bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg hover:bg-green-500/30 transition-all text-xs font-semibold flex items-center gap-1"
+                                    >
+                                        <i data-lucide="download" class="w-3 h-3"></i>
+                                        Download
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                
+                resultsDiv.innerHTML = html;
+                lucide.createIcons();
+                showToast('Success', `Found ${Object.keys(sessions).length} session(s)`);
+            } catch (err) {
+                resultsDiv.innerHTML = `
+                    <div class="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                        <pre class="text-red-400 text-sm">${err.message}</pre>
+                    </div>
+                `;
+                showToast('Error', `${err.message}`, 'destructive');
             }
         });
 
-        // Make previewFile globally accessible
-        window.previewFile = previewFile;
-        window.copyToClipboard = copyToClipboard;
+        // JSON Viewer functions
+        async function viewJson(url, fileName) {
+            try {
+                modalTitle.textContent = fileName;
+                jsonContent.textContent = 'Loading...';
+                jsonModal.classList.add('show');
+                lucide.createIcons();
 
-        // Initialize
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                currentJsonData = data;
+                currentFileName = fileName;
+                jsonContent.textContent = JSON.stringify(data, null, 2);
+                
+                showToast('Success', 'JSON loaded successfully');
+            } catch (err) {
+                jsonContent.textContent = `Error loading JSON: ${err.message}`;
+                showToast('Error', 'Failed to load JSON', 'destructive');
+            }
+        }
+
+        // Modal controls
+        closeModal.addEventListener('click', () => {
+            jsonModal.classList.remove('show');
+        });
+
+        jsonModal.addEventListener('click', (e) => {
+            if (e.target === jsonModal) {
+                jsonModal.classList.remove('show');
+            }
+        });
+
+        copyJsonBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(jsonContent.textContent);
+                showToast('Copied', 'JSON copied to clipboard');
+            } catch (err) {
+                showToast('Error', 'Could not copy to clipboard', 'destructive');
+            }
+        });
+
+        downloadJsonBtn.addEventListener('click', () => {
+            if (!currentJsonData || !currentFileName) return;
+            
+            const blob = new Blob([JSON.stringify(currentJsonData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Success', 'JSON downloaded');
+        });
+
+        // Make viewJson available globally
+        window.viewJson = viewJson;
+
+        // Initialize icons
         lucide.createIcons();
     </script>
 </body>
